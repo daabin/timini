@@ -1,4 +1,6 @@
-import React, { createContext, useState, useContext } from 'react';
+'use client'
+
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
 interface ThemeContextType {
   theme: string;
@@ -12,8 +14,17 @@ export const ThemeProvider = ({
 }: {
   children: React.ReactNode
 }) => {
-  const initialTheme = localStorage.getItem('__timini_theme_bg__') || 'black';
+  const initialTheme = 'black';
   const [theme, setTheme] = useState<string>(initialTheme);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const localTheme = localStorage.getItem('__timini_theme_bg__');
+    if (localTheme) {
+      setTheme(localTheme);
+    }
+    setLoading(false)
+  }, []);
 
   const toggleTheme = (prevTheme: string) => {
     setTheme(prevTheme);
@@ -22,7 +33,7 @@ export const ThemeProvider = ({
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
+      {!loading && children}
     </ThemeContext.Provider>
   );
 };
